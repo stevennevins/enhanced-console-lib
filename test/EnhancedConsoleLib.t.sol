@@ -51,18 +51,30 @@ contract EnhancedConsoleLibTest is Test {
 
         EnhancedConsoleLib.logTable(headers, rows);
     }
+
     function testLogWithBackground() public pure {
-        EnhancedConsoleLib.logWithBackground("White text on red background", EnhancedConsoleLib.WHITE, EnhancedConsoleLib.BG_RED);
-        EnhancedConsoleLib.logWithBackground("Black text on yellow background", EnhancedConsoleLib.BLACK, EnhancedConsoleLib.BG_YELLOW);
+        EnhancedConsoleLib.logWithBackground(
+            "White text on red background", EnhancedConsoleLib.WHITE, EnhancedConsoleLib.BG_RED
+        );
+        EnhancedConsoleLib.logWithBackground(
+            "Black text on yellow background",
+            EnhancedConsoleLib.BLACK,
+            EnhancedConsoleLib.BG_YELLOW
+        );
     }
 
     function testLogWithBackgroundMultipleColors() public pure {
-        EnhancedConsoleLib.logWithBackground("Blue text on green background", EnhancedConsoleLib.BLUE, EnhancedConsoleLib.BG_GREEN);
-        EnhancedConsoleLib.logWithBackground("Magenta text on cyan background", EnhancedConsoleLib.MAGENTA, EnhancedConsoleLib.BG_CYAN);
+        EnhancedConsoleLib.logWithBackground(
+            "Blue text on green background", EnhancedConsoleLib.BLUE, EnhancedConsoleLib.BG_GREEN
+        );
+        EnhancedConsoleLib.logWithBackground(
+            "Magenta text on cyan background",
+            EnhancedConsoleLib.MAGENTA,
+            EnhancedConsoleLib.BG_CYAN
+        );
     }
 
     function testLogBanner() public pure {
         EnhancedConsoleLib.logBanner("Starting Section");
     }
-
 }
