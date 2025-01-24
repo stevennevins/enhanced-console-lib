@@ -77,4 +77,195 @@ contract EnhancedConsoleLibTest is Test {
     function testLogBanner() public pure {
         EnhancedConsoleLib.logBanner("Starting Section");
     }
+
+    function testPlotPriceVolatility() public pure {
+        // Simulate volatile price movements of a token
+        uint256[] memory priceData = new uint256[](20);
+        uint256 basePrice = 1000;
+        for (uint256 i = 0; i < priceData.length; i++) {
+            // Simulate price fluctuations around the base price
+            int256 fluctuation = int256(uint256(keccak256(abi.encode(i)))) % 200; // Random fluctuation up to +/- 200
+            priceData[i] = uint256(int256(basePrice) + fluctuation);
+        }
+
+        console.log("\n--- Price Volatility Simulation ---");
+        EnhancedConsoleLib.plotAsciiChart(priceData);
+        console.log("--- End Price Volatility Simulation ---");
+    }
+
+    function testPlotLiquidityChange() public pure {
+        // Simulate liquidity changes in a DeFi pool
+        uint256[] memory liquidityData = new uint256[](15);
+        uint256 initialLiquidity = 5000;
+        uint256 liquidityStep = 500;
+
+        // First scenario: Gradual liquidity increase
+        for (uint256 i = 0; i < liquidityData.length; i++) {
+            liquidityData[i] = initialLiquidity + (i * liquidityStep);
+        }
+
+        console.log("\n--- Gradual Liquidity Increase ---");
+        EnhancedConsoleLib.plotAsciiChart(liquidityData);
+        console.log("--- End Gradual Liquidity Increase ---");
+
+        // Second scenario: Liquidity spike and drop
+        uint256[] memory liquidityDropData = new uint256[](15);
+        initialLiquidity = 10000;
+        for (uint256 i = 0; i < liquidityDropData.length; i++) {
+            liquidityDropData[i] = initialLiquidity + (i < 10 ? i * liquidityStep : (10 - (i - 10)) * liquidityStep);
+        }
+
+        console.log("\n--- Liquidity Spike and Drop ---");
+        EnhancedConsoleLib.plotAsciiChart(liquidityDropData);
+        console.log("--- End Liquidity Spike and Drop ---");
+    }
+
+    function testPlotGasUsageSpike() public pure {
+        // Simulate gas usage patterns with a spike
+        uint256[] memory gasUsageData = new uint256[](12);
+        for (uint256 i = 0; i < gasUsageData.length; i++) {
+            gasUsageData[i] = 50000 + (i * 1000); // Gradually increasing base gas cost
+            if (i == 5) {
+                gasUsageData[i] = 250000; // Simulate a gas spike at index 5
+            }
+        }
+
+        console.log("\n--- Gas Usage Pattern with Spike ---");
+        EnhancedConsoleLib.plotAsciiChart(gasUsageData, 15); // Taller chart for better detail
+        console.log("--- End Gas Usage Pattern ---");
+    }
+
+    function testVisualizeStateMachine() public pure {
+        // Test state machine visualization with a simple lending protocol state machine
+        string[] memory states = new string[](4);
+        states[0] = "Idle";
+        states[1] = "Active";
+        states[2] = "Paused";
+        states[3] = "Liquidated";
+
+        EnhancedConsoleLib.Transition[] memory transitions = new EnhancedConsoleLib.Transition[](4);
+
+        // Idle -> Active (deposit)
+        transitions[0] = EnhancedConsoleLib.Transition({
+            fromStateIndex: 0,
+            toStateIndex: 1,
+            triggerEvent: "deposit()"
+        });
+
+        // Active -> Paused (emergency pause)
+        transitions[1] = EnhancedConsoleLib.Transition({
+            fromStateIndex: 1,
+            toStateIndex: 2,
+            triggerEvent: "pause()"
+        });
+
+        // Paused -> Active (resume)
+        transitions[2] = EnhancedConsoleLib.Transition({
+            fromStateIndex: 2,
+            toStateIndex: 1,
+            triggerEvent: "resume()"
+        });
+
+        // Active -> Liquidated (health check failed)
+        transitions[3] = EnhancedConsoleLib.Transition({
+            fromStateIndex: 1,
+            toStateIndex: 3,
+            triggerEvent: "liquidate()"
+        });
+
+        console.log("\n--- Lending Protocol State Machine ---");
+        EnhancedConsoleLib.visualizeStateMachine(states, transitions);
+        console.log("--- End State Machine ---");
+    }
+
+    function testVisualizeTokenFlow() public pure {
+        // Test token flow visualization with a DEX swap scenario
+        EnhancedConsoleLib.TokenFlow[] memory flows = new EnhancedConsoleLib.TokenFlow[](3);
+
+        // User sends USDC to DEX
+        flows[0] = EnhancedConsoleLib.TokenFlow({
+            fromEntityName: "User",
+            toEntityName: "DEX",
+            tokenSymbol: "USDC",
+            amount: 1000
+        });
+
+        // DEX sends DAI to User
+        flows[1] = EnhancedConsoleLib.TokenFlow({
+            fromEntityName: "DEX",
+            toEntityName: "User",
+            tokenSymbol: "DAI",
+            amount: 980
+        });
+
+        // DEX sends fee to Treasury
+        flows[2] = EnhancedConsoleLib.TokenFlow({
+            fromEntityName: "DEX",
+            toEntityName: "Treasury",
+            tokenSymbol: "USDC",
+            amount: 20
+        });
+
+        console.log("\n--- DEX Swap Token Flow ---");
+        EnhancedConsoleLib.visualizeTokenFlow(flows);
+        console.log("--- End Token Flow ---");
+    }
+
+    function testVisualizeRiskGauge() public pure {
+        console.log("\n--- Collateral Health Check ---");
+
+        // Test healthy collateral ratio
+        EnhancedConsoleLib.visualizeRiskGauge(
+            "Collateral Ratio",
+            180,    // Current value: 180%
+            150,    // Min required: 150%
+            300,    // Max healthy: 300%
+            true    // Higher is better
+        );
+
+        console.log("\n--- Utilization Rate Check ---");
+
+        // Test concerning utilization rate
+        EnhancedConsoleLib.visualizeRiskGauge(
+            "Pool Utilization",
+            85,     // Current value: 85%
+            0,      // Min: 0%
+            80,     // Max healthy: 80%
+            false   // Lower is better
+        );
+    }
+
+    function testVisualizeBalanceChange() public pure {
+        console.log("\n--- Balance Change Visualization ---");
+
+        // Test increase in balance
+        EnhancedConsoleLib.visualizeBalanceChange(
+            "Alice",
+            "ETH",
+            1 ether
+        );
+
+        // Test decrease in balance
+        EnhancedConsoleLib.visualizeBalanceChange(
+            "Bob",
+            "USDC",
+            -500
+        );
+
+        // Test no change in balance
+        EnhancedConsoleLib.visualizeBalanceChange(
+            "Treasury",
+            "DAI",
+            0
+        );
+
+        // Test large number formatting
+        EnhancedConsoleLib.visualizeBalanceChange(
+            "Whale",
+            "USDT",
+            1000000
+        );
+
+        console.log("--- End Balance Change Visualization ---");
+    }
 }
