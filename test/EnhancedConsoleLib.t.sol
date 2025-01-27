@@ -110,9 +110,10 @@ contract EnhancedConsoleLibTest is Test {
 
         // Second scenario: Liquidity spike and drop
         uint256[] memory liquidityDropData = new uint256[](15);
-        initialLiquidity = 10000;
+        initialLiquidity = 10_000;
         for (uint256 i = 0; i < liquidityDropData.length; i++) {
-            liquidityDropData[i] = initialLiquidity + (i < 10 ? i * liquidityStep : (10 - (i - 10)) * liquidityStep);
+            liquidityDropData[i] =
+                initialLiquidity + (i < 10 ? i * liquidityStep : (10 - (i - 10)) * liquidityStep);
         }
 
         console.log("\n--- Liquidity Spike and Drop ---");
@@ -124,9 +125,9 @@ contract EnhancedConsoleLibTest is Test {
         // Simulate gas usage patterns with a spike
         uint256[] memory gasUsageData = new uint256[](12);
         for (uint256 i = 0; i < gasUsageData.length; i++) {
-            gasUsageData[i] = 50000 + (i * 1000); // Gradually increasing base gas cost
+            gasUsageData[i] = 50_000 + (i * 1000); // Gradually increasing base gas cost
             if (i == 5) {
-                gasUsageData[i] = 250000; // Simulate a gas spike at index 5
+                gasUsageData[i] = 250_000; // Simulate a gas spike at index 5
             }
         }
 
@@ -217,10 +218,10 @@ contract EnhancedConsoleLibTest is Test {
         // Test healthy collateral ratio
         EnhancedConsoleLib.visualizeRiskGauge(
             "Collateral Ratio",
-            180,    // Current value: 180%
-            150,    // Min required: 150%
-            300,    // Max healthy: 300%
-            true    // Higher is better
+            180, // Current value: 180%
+            150, // Min required: 150%
+            300, // Max healthy: 300%
+            true // Higher is better
         );
 
         console.log("\n--- Utilization Rate Check ---");
@@ -228,10 +229,10 @@ contract EnhancedConsoleLibTest is Test {
         // Test concerning utilization rate
         EnhancedConsoleLib.visualizeRiskGauge(
             "Pool Utilization",
-            85,     // Current value: 85%
-            0,      // Min: 0%
-            80,     // Max healthy: 80%
-            false   // Lower is better
+            85, // Current value: 85%
+            0, // Min: 0%
+            80, // Max healthy: 80%
+            false // Lower is better
         );
     }
 
@@ -239,32 +240,16 @@ contract EnhancedConsoleLibTest is Test {
         console.log("\n--- Balance Change Visualization ---");
 
         // Test increase in balance
-        EnhancedConsoleLib.visualizeBalanceChange(
-            "Alice",
-            "ETH",
-            1 ether
-        );
+        EnhancedConsoleLib.visualizeBalanceChange("Alice", "ETH", 1 ether);
 
         // Test decrease in balance
-        EnhancedConsoleLib.visualizeBalanceChange(
-            "Bob",
-            "USDC",
-            -500
-        );
+        EnhancedConsoleLib.visualizeBalanceChange("Bob", "USDC", -500);
 
         // Test no change in balance
-        EnhancedConsoleLib.visualizeBalanceChange(
-            "Treasury",
-            "DAI",
-            0
-        );
+        EnhancedConsoleLib.visualizeBalanceChange("Treasury", "DAI", 0);
 
         // Test large number formatting
-        EnhancedConsoleLib.visualizeBalanceChange(
-            "Whale",
-            "USDT",
-            1000000
-        );
+        EnhancedConsoleLib.visualizeBalanceChange("Whale", "USDT", 1_000_000);
 
         console.log("--- End Balance Change Visualization ---");
     }
@@ -275,60 +260,34 @@ contract EnhancedConsoleLibTest is Test {
         // Test staking progression scenario
         EnhancedConsoleLib.StepValue[] memory stakingSteps = new EnhancedConsoleLib.StepValue[](4);
 
-        stakingSteps[0] = EnhancedConsoleLib.StepValue({
-            label: "Initial Stake",
-            value: 100 ether
-        });
+        stakingSteps[0] = EnhancedConsoleLib.StepValue({label: "Initial Stake", value: 100 ether});
 
-        stakingSteps[1] = EnhancedConsoleLib.StepValue({
-            label: "After Rewards",
-            value: 110 ether
-        });
+        stakingSteps[1] = EnhancedConsoleLib.StepValue({label: "After Rewards", value: 110 ether});
 
-        stakingSteps[2] = EnhancedConsoleLib.StepValue({
-            label: "Second Stake",
-            value: 210 ether
-        });
+        stakingSteps[2] = EnhancedConsoleLib.StepValue({label: "Second Stake", value: 210 ether});
 
-        stakingSteps[3] = EnhancedConsoleLib.StepValue({
-            label: "Final Balance",
-            value: 231 ether
-        });
+        stakingSteps[3] = EnhancedConsoleLib.StepValue({label: "Final Balance", value: 231 ether});
 
         EnhancedConsoleLib.visualizeValueProgression("Staking Progress", stakingSteps);
 
         // Test pool utilization scenario
-        EnhancedConsoleLib.StepValue[] memory utilizationSteps = new EnhancedConsoleLib.StepValue[](5);
+        EnhancedConsoleLib.StepValue[] memory utilizationSteps =
+            new EnhancedConsoleLib.StepValue[](5);
 
-        utilizationSteps[0] = EnhancedConsoleLib.StepValue({
-            label: "Start",
-            value: 20
-        });
+        utilizationSteps[0] = EnhancedConsoleLib.StepValue({label: "Start", value: 20});
 
-        utilizationSteps[1] = EnhancedConsoleLib.StepValue({
-            label: "After Deposit",
-            value: 45
-        });
+        utilizationSteps[1] = EnhancedConsoleLib.StepValue({label: "After Deposit", value: 45});
 
-        utilizationSteps[2] = EnhancedConsoleLib.StepValue({
-            label: "Peak Usage",
-            value: 85
-        });
+        utilizationSteps[2] = EnhancedConsoleLib.StepValue({label: "Peak Usage", value: 85});
 
-        utilizationSteps[3] = EnhancedConsoleLib.StepValue({
-            label: "After Withdraw",
-            value: 60
-        });
+        utilizationSteps[3] = EnhancedConsoleLib.StepValue({label: "After Withdraw", value: 60});
 
-        utilizationSteps[4] = EnhancedConsoleLib.StepValue({
-            label: "End of Day",
-            value: 35
-        });
+        utilizationSteps[4] = EnhancedConsoleLib.StepValue({label: "End of Day", value: 35});
 
         EnhancedConsoleLib.visualizeValueProgression(
             "Pool Utilization %",
             utilizationSteps,
-            30  // Shorter bars for percentage values
+            30 // Shorter bars for percentage values
         );
 
         console.log("--- End Value Progression Examples ---");
@@ -340,32 +299,32 @@ contract EnhancedConsoleLibTest is Test {
         // Test slippage within allowed limit
         console.log("Case 1: Slippage within allowed limit");
         EnhancedConsoleLib.visualizeSlippage(
-            50,     // 0.50% actual slippage
-            100     // 1.00% allowed slippage
+            50, // 0.50% actual slippage
+            100 // 1.00% allowed slippage
         );
 
         console.log("\nCase 2: Slippage at exactly allowed limit");
         EnhancedConsoleLib.visualizeSlippage(
-            100,    // 1.00% actual slippage
-            100     // 1.00% allowed slippage
+            100, // 1.00% actual slippage
+            100 // 1.00% allowed slippage
         );
 
         console.log("\nCase 3: Slippage exceeding allowed limit");
         EnhancedConsoleLib.visualizeSlippage(
-            150,    // 1.50% actual slippage
-            100     // 1.00% allowed slippage
+            150, // 1.50% actual slippage
+            100 // 1.00% allowed slippage
         );
 
         console.log("\nCase 4: High precision slippage");
         EnhancedConsoleLib.visualizeSlippage(
-            123,    // 1.23% actual slippage
-            500     // 5.00% allowed slippage
+            123, // 1.23% actual slippage
+            500 // 5.00% allowed slippage
         );
 
         console.log("\nCase 5: Zero allowed slippage");
         EnhancedConsoleLib.visualizeSlippage(
-            10,     // 0.10% actual slippage
-            0       // 0.00% allowed slippage
+            10, // 0.10% actual slippage
+            0 // 0.00% allowed slippage
         );
 
         console.log("--- End Slippage Visualization Examples ---");
@@ -383,11 +342,11 @@ contract EnhancedConsoleLibTest is Test {
         tokens[4] = "UNI";
 
         uint256[] memory balances = new uint256[](5);
-        balances[0] = 100 ether;    // 100 ETH
-        balances[1] = 50000;        // 50,000 USDC
-        balances[2] = 5 ether;      // 5 WBTC
-        balances[3] = 75000;        // 75,000 DAI
-        balances[4] = 2500;         // 2,500 UNI
+        balances[0] = 100 ether; // 100 ETH
+        balances[1] = 50_000; // 50,000 USDC
+        balances[2] = 5 ether; // 5 WBTC
+        balances[3] = 75_000; // 75,000 DAI
+        balances[4] = 2500; // 2,500 UNI
 
         EnhancedConsoleLib.plotHorizontalBarChart(tokens, balances);
 
@@ -401,15 +360,15 @@ contract EnhancedConsoleLibTest is Test {
         functions[3] = "claim()";
 
         uint256[] memory gasUsage = new uint256[](4);
-        gasUsage[0] = 120000;   // 120k gas
-        gasUsage[1] = 85000;    // 85k gas
-        gasUsage[2] = 160000;   // 160k gas
-        gasUsage[3] = 45000;    // 45k gas
+        gasUsage[0] = 120_000; // 120k gas
+        gasUsage[1] = 85_000; // 85k gas
+        gasUsage[2] = 160_000; // 160k gas
+        gasUsage[3] = 45_000; // 45k gas
 
         EnhancedConsoleLib.plotHorizontalBarChart(
             functions,
             gasUsage,
-            30  // Shorter bars for gas usage
+            30 // Shorter bars for gas usage
         );
 
         console.log("--- End Horizontal Bar Chart Examples ---");

@@ -240,14 +240,18 @@ library EnhancedConsoleLib {
     /**
      * @notice Convenience overload for plotAsciiChart with default height
      */
-    function plotAsciiChart(uint256[] memory dataPoints) internal pure {
+    function plotAsciiChart(
+        uint256[] memory dataPoints
+    ) internal pure {
         plotAsciiChart(dataPoints, 10);
     }
 
     /**
      * @notice Converts a uint256 to its string representation
      */
-    function toString(uint256 value) private pure returns (string memory) {
+    function toString(
+        uint256 value
+    ) private pure returns (string memory) {
         if (value == 0) return "0";
 
         uint256 temp = value;
@@ -315,7 +319,9 @@ library EnhancedConsoleLib {
                 toStateDisplay = string.concat(CYAN, "[", toState, "]", RESET);
             }
 
-            console.log(string.concat("  ", fromStateDisplay, " -- ", trigger, " --> ", toStateDisplay));
+            console.log(
+                string.concat("  ", fromStateDisplay, " -- ", trigger, " --> ", toStateDisplay)
+            );
         }
         console.log("");
 
@@ -329,7 +335,9 @@ library EnhancedConsoleLib {
      * @notice Visualizes token flows between entities in ASCII format
      * @param flows Array of token flows between entities
      */
-    function visualizeTokenFlow(TokenFlow[] memory flows) internal pure {
+    function visualizeTokenFlow(
+        TokenFlow[] memory flows
+    ) internal pure {
         logColored("Token Flow Visualization:", CYAN);
         console.log("");
 
@@ -423,9 +431,9 @@ library EnhancedConsoleLib {
         }
 
         // Build the gauge with color coding
-        string memory color = isHigherBetter ?
-            (currentValue >= minValue ? GREEN : RED) :
-            (currentValue <= maxValue ? GREEN : RED);
+        string memory color = isHigherBetter
+            ? (currentValue >= minValue ? GREEN : RED)
+            : (currentValue <= maxValue ? GREEN : RED);
 
         for (uint256 i = 0; i < gaugeLength; i++) {
             if (i < position) {
@@ -439,11 +447,13 @@ library EnhancedConsoleLib {
         gauge = string.concat(gauge, "]");
 
         console.log(string.concat(gauge, "  ", toString(currentValue), "%"));
-        console.log(string.concat("Min: ", toString(minValue), "%         Max: ", toString(maxValue), "%"));
+        console.log(
+            string.concat("Min: ", toString(minValue), "%         Max: ", toString(maxValue), "%")
+        );
 
-        string memory status = isHigherBetter ?
-            (currentValue >= minValue ? "Healthy" : "Risky") :
-            (currentValue <= maxValue ? "Healthy" : "Risky");
+        string memory status = isHigherBetter
+            ? (currentValue >= minValue ? "Healthy" : "Risky")
+            : (currentValue <= maxValue ? "Healthy" : "Risky");
 
         console.log(
             string.concat(
@@ -556,16 +566,7 @@ library EnhancedConsoleLib {
             bar = string.concat(bar, "|");
 
             // Print line with value
-            console.log(
-                string.concat(
-                    paddedLabel,
-                    " ",
-                    bar,
-                    " (",
-                    toString(steps[i].value),
-                    ")"
-                )
-            );
+            console.log(string.concat(paddedLabel, " ", bar, " (", toString(steps[i].value), ")"));
         }
         console.log("");
     }
