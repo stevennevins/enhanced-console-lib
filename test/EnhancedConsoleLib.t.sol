@@ -268,4 +268,150 @@ contract EnhancedConsoleLibTest is Test {
 
         console.log("--- End Balance Change Visualization ---");
     }
+
+    function testVisualizeValueProgression() public pure {
+        console.log("\n--- Value Progression Examples ---");
+
+        // Test staking progression scenario
+        EnhancedConsoleLib.StepValue[] memory stakingSteps = new EnhancedConsoleLib.StepValue[](4);
+
+        stakingSteps[0] = EnhancedConsoleLib.StepValue({
+            label: "Initial Stake",
+            value: 100 ether
+        });
+
+        stakingSteps[1] = EnhancedConsoleLib.StepValue({
+            label: "After Rewards",
+            value: 110 ether
+        });
+
+        stakingSteps[2] = EnhancedConsoleLib.StepValue({
+            label: "Second Stake",
+            value: 210 ether
+        });
+
+        stakingSteps[3] = EnhancedConsoleLib.StepValue({
+            label: "Final Balance",
+            value: 231 ether
+        });
+
+        EnhancedConsoleLib.visualizeValueProgression("Staking Progress", stakingSteps);
+
+        // Test pool utilization scenario
+        EnhancedConsoleLib.StepValue[] memory utilizationSteps = new EnhancedConsoleLib.StepValue[](5);
+
+        utilizationSteps[0] = EnhancedConsoleLib.StepValue({
+            label: "Start",
+            value: 20
+        });
+
+        utilizationSteps[1] = EnhancedConsoleLib.StepValue({
+            label: "After Deposit",
+            value: 45
+        });
+
+        utilizationSteps[2] = EnhancedConsoleLib.StepValue({
+            label: "Peak Usage",
+            value: 85
+        });
+
+        utilizationSteps[3] = EnhancedConsoleLib.StepValue({
+            label: "After Withdraw",
+            value: 60
+        });
+
+        utilizationSteps[4] = EnhancedConsoleLib.StepValue({
+            label: "End of Day",
+            value: 35
+        });
+
+        EnhancedConsoleLib.visualizeValueProgression(
+            "Pool Utilization %",
+            utilizationSteps,
+            30  // Shorter bars for percentage values
+        );
+
+        console.log("--- End Value Progression Examples ---");
+    }
+
+    function testVisualizeSlippage() public pure {
+        console.log("\n--- Slippage Visualization Examples ---");
+
+        // Test slippage within allowed limit
+        console.log("Case 1: Slippage within allowed limit");
+        EnhancedConsoleLib.visualizeSlippage(
+            50,     // 0.50% actual slippage
+            100     // 1.00% allowed slippage
+        );
+
+        console.log("\nCase 2: Slippage at exactly allowed limit");
+        EnhancedConsoleLib.visualizeSlippage(
+            100,    // 1.00% actual slippage
+            100     // 1.00% allowed slippage
+        );
+
+        console.log("\nCase 3: Slippage exceeding allowed limit");
+        EnhancedConsoleLib.visualizeSlippage(
+            150,    // 1.50% actual slippage
+            100     // 1.00% allowed slippage
+        );
+
+        console.log("\nCase 4: High precision slippage");
+        EnhancedConsoleLib.visualizeSlippage(
+            123,    // 1.23% actual slippage
+            500     // 5.00% allowed slippage
+        );
+
+        console.log("\nCase 5: Zero allowed slippage");
+        EnhancedConsoleLib.visualizeSlippage(
+            10,     // 0.10% actual slippage
+            0       // 0.00% allowed slippage
+        );
+
+        console.log("--- End Slippage Visualization Examples ---");
+    }
+
+    function testPlotHorizontalBarChart() public pure {
+        console.log("\n--- Portfolio Allocation Example ---");
+
+        // Test token portfolio allocation
+        string[] memory tokens = new string[](5);
+        tokens[0] = "ETH";
+        tokens[1] = "USDC";
+        tokens[2] = "WBTC";
+        tokens[3] = "DAI";
+        tokens[4] = "UNI";
+
+        uint256[] memory balances = new uint256[](5);
+        balances[0] = 100 ether;    // 100 ETH
+        balances[1] = 50000;        // 50,000 USDC
+        balances[2] = 5 ether;      // 5 WBTC
+        balances[3] = 75000;        // 75,000 DAI
+        balances[4] = 2500;         // 2,500 UNI
+
+        EnhancedConsoleLib.plotHorizontalBarChart(tokens, balances);
+
+        console.log("\n--- Gas Usage by Function Example ---");
+
+        // Test gas usage comparison
+        string[] memory functions = new string[](4);
+        functions[0] = "deposit()";
+        functions[1] = "withdraw()";
+        functions[2] = "stake()";
+        functions[3] = "claim()";
+
+        uint256[] memory gasUsage = new uint256[](4);
+        gasUsage[0] = 120000;   // 120k gas
+        gasUsage[1] = 85000;    // 85k gas
+        gasUsage[2] = 160000;   // 160k gas
+        gasUsage[3] = 45000;    // 45k gas
+
+        EnhancedConsoleLib.plotHorizontalBarChart(
+            functions,
+            gasUsage,
+            30  // Shorter bars for gas usage
+        );
+
+        console.log("--- End Horizontal Bar Chart Examples ---");
+    }
 }

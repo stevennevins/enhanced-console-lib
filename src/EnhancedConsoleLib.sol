@@ -503,4 +503,254 @@ library EnhancedConsoleLib {
             )
         );
     }
+
+    struct StepValue {
+        string label;
+        uint256 value;
+    }
+
+    /**
+     * @notice Visualizes how a value changes across different steps using horizontal bars
+     * @param title The title of the progression chart
+     * @param steps Array of step labels and values to visualize
+     * @param maxBarLength Maximum length of the bars (default: 40)
+     */
+    function visualizeValueProgression(
+        string memory title,
+        StepValue[] memory steps,
+        uint256 maxBarLength
+    ) internal pure {
+        if (steps.length == 0) return;
+
+        // Find max value for scaling
+        uint256 maxValue = steps[0].value;
+        uint256 maxLabelLength = bytes(steps[0].label).length;
+
+        for (uint256 i = 1; i < steps.length; i++) {
+            if (steps[i].value > maxValue) maxValue = steps[i].value;
+            uint256 labelLength = bytes(steps[i].label).length;
+            if (labelLength > maxLabelLength) maxLabelLength = labelLength;
+        }
+
+        // Print title
+        logColored(string.concat(title, ":"), CYAN);
+        console.log("");
+
+        // Print bars
+        for (uint256 i = 0; i < steps.length; i++) {
+            // Pad label for alignment
+            string memory paddedLabel = padRight(steps[i].label, maxLabelLength);
+
+            // Calculate bar length
+            uint256 barLength = maxValue == 0 ? 0 : (steps[i].value * maxBarLength) / maxValue;
+
+            // Build bar
+            string memory bar = "|";
+            for (uint256 j = 0; j < maxBarLength; j++) {
+                if (j < barLength) {
+                    bar = string.concat(bar, GREEN, "=", RESET);
+                } else {
+                    bar = string.concat(bar, "-");
+                }
+            }
+            bar = string.concat(bar, "|");
+
+            // Print line with value
+            console.log(
+                string.concat(
+                    paddedLabel,
+                    " ",
+                    bar,
+                    " (",
+                    toString(steps[i].value),
+                    ")"
+                )
+            );
+        }
+        console.log("");
+    }
+
+    /**
+     * @notice Convenience overload for visualizeValueProgression with default bar length
+     */
+    function visualizeValueProgression(
+        string memory title,
+        StepValue[] memory steps
+    ) internal pure {
+        visualizeValueProgression(title, steps, 40);
+    }
+
+    /**
+     * @notice Visualizes slippage percentage against allowed slippage in ASCII format
+     * @param actualSlippageBps Actual slippage experienced in basis points (1% = 100 bps)
+     * @param allowedSlippageBps Allowed slippage limit in basis points
+     */
+    function visualizeSlippage(
+        uint256 actualSlippageBps,
+        uint256 allowedSlippageBps
+    ) internal pure {
+        logColored("Slippage:", CYAN);
+        console.log("");
+
+        uint256 gaugeLength = 20;
+        string memory gauge = "[";
+        uint256 actualPosition;
+        uint256 allowedPosition;
+
+        if (allowedSlippageBps > 0) {
+            actualPosition = (actualSlippageBps * gaugeLength) / allowedSlippageBps;
+            if (actualPosition > gaugeLength) actualPosition = gaugeLength;
+            allowedPosition = gaugeLength;
+        } else {
+            actualPosition = 0;
+            allowedPosition = 0;
+        }
+
+        string memory color = actualSlippageBps <= allowedSlippageBps ? GREEN : RED;
+        string memory gaugeFill = "";
+        string memory gaugeEmpty = "";
+
+        for (uint256 i = 0; i < gaugeLength; i++) {
+            if (i < actualPosition) {
+                gaugeFill = string.concat(gaugeFill, "=");
+            } else {
+                gaugeEmpty = string.concat(gaugeEmpty, "-");
+            }
+        }
+
+        gauge = string.concat(gauge, color, gaugeFill, RESET, "|", gaugeEmpty, "]");
+
+        string memory allowedLimitMarkerLine = "                    "; // 20 spaces
+        if (allowedPosition > 0 && allowedPosition <= gaugeLength) {
+            allowedLimitMarkerLine = replaceCharAt(allowedLimitMarkerLine, allowedPosition, "^");
+        }
+
+        console.log(
+            string.concat(
+                "  ",
+                gauge,
+                " ",
+                toString(actualSlippageBps / 100),
+                ".",
+                padLeft(toString(actualSlippageBps % 100), 2, "0"),
+                "%",
+                " (Allowed: ",
+                toString(allowedSlippageBps / 100),
+                ".",
+                padLeft(toString(allowedSlippageBps % 100), 2, "0"),
+                "%)"
+            )
+        );
+        console.log(string.concat("  ", allowedLimitMarkerLine, " Allowed Limit"));
+    }
+
+    /**
+     * @notice Replaces a character at a specific index in a string
+     * @param str The input string
+     * @param index The index where to replace the character
+     * @param replacement The replacement character
+     */
+    function replaceCharAt(
+        string memory str,
+        uint256 index,
+        string memory replacement
+    ) private pure returns (string memory) {
+        bytes memory strBytes = bytes(str);
+        bytes memory replacementBytes = bytes(replacement);
+        require(index < strBytes.length, "Index out of bounds");
+
+        bytes memory result = new bytes(strBytes.length);
+        for (uint256 i = 0; i < strBytes.length; i++) {
+            if (i == index) {
+                result[i] = replacementBytes[0];
+            } else {
+                result[i] = strBytes[i];
+            }
+        }
+        return string(result);
+    }
+
+    /**
+     * @notice Pads a string with leading characters
+     * @param str The input string
+     * @param length The desired length after padding
+     * @param padChar The character to use for padding
+     */
+    function padLeft(
+        string memory str,
+        uint256 length,
+        string memory padChar
+    ) private pure returns (string memory) {
+        bytes memory strBytes = bytes(str);
+        if (strBytes.length >= length) return str;
+
+        bytes memory result = new bytes(length);
+        uint256 paddingLength = length - strBytes.length;
+
+        for (uint256 i = 0; i < paddingLength; i++) {
+            result[i] = bytes(padChar)[0];
+        }
+        for (uint256 j = 0; j < strBytes.length; j++) {
+            result[paddingLength + j] = strBytes[j];
+        }
+        return string(result);
+    }
+
+    /**
+     * @notice Plots a horizontal bar chart for comparing values across categories
+     * @param labels Array of category labels
+     * @param values Array of corresponding values
+     * @param maxBarLength Maximum length of the bars (default: 40)
+     */
+    function plotHorizontalBarChart(
+        string[] memory labels,
+        uint256[] memory values,
+        uint256 maxBarLength
+    ) internal pure {
+        require(labels.length == values.length, "Labels and values length mismatch");
+        if (labels.length == 0) return;
+
+        // Find max value and longest label
+        uint256 maxValue = values[0];
+        uint256 maxLabelLength = bytes(labels[0]).length;
+
+        for (uint256 i = 1; i < values.length; i++) {
+            if (values[i] > maxValue) maxValue = values[i];
+            uint256 labelLength = bytes(labels[i]).length;
+            if (labelLength > maxLabelLength) maxLabelLength = labelLength;
+        }
+
+        // Print bars
+        for (uint256 i = 0; i < values.length; i++) {
+            // Pad label for alignment
+            string memory paddedLabel = padRight(labels[i], maxLabelLength);
+
+            // Calculate bar length
+            uint256 barLength = maxValue == 0 ? 0 : (values[i] * maxBarLength) / maxValue;
+
+            // Build bar
+            string memory bar = "|";
+            for (uint256 j = 0; j < maxBarLength; j++) {
+                if (j < barLength) {
+                    bar = string.concat(bar, GREEN, "=", RESET);
+                } else {
+                    bar = string.concat(bar, "-");
+                }
+            }
+            bar = string.concat(bar, "| ", toString(values[i]));
+
+            // Print line
+            console.log(string.concat(paddedLabel, " ", bar));
+        }
+    }
+
+    /**
+     * @notice Convenience overload for plotHorizontalBarChart with default bar length
+     */
+    function plotHorizontalBarChart(
+        string[] memory labels,
+        uint256[] memory values
+    ) internal pure {
+        plotHorizontalBarChart(labels, values, 40);
+    }
 }
